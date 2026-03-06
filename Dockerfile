@@ -1,22 +1,30 @@
 # Redsocks docker image.
+FROM debian:bookworm-slim
 
-FROM debian:jessie
+LABEL maintainer="Anoncheg1 <https://github.com/Anoncheg1>"
 
-MAINTAINER Nicolas Carlier <https://github.com/ncarlier>
+# Set environment
+ENV DEBIAN_FRONTEND=noninteractive \
+    DOCKER_NET=docker0
 
-ENV DEBIAN_FRONTEND noninteractive
+# Install redsocks and iptables, clean in one layer
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends redsocks iptables && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    adduser --disabled-password --gecos '' redsocks
 
-ENV DOCKER_NET docker0
-
-# Install packages
-RUN apt-get update && apt-get install -y redsocks iptables
-
-# Copy configuration files...
+# Copy files
 COPY redsocks.tmpl /etc/redsocks.tmpl
 COPY whitelist.txt /etc/redsocks-whitelist.txt
-COPY redsocks.sh /usr/local/bin/redsocks.sh
-COPY redsocks-fw.sh /usr/local/bin/redsocks-fw.sh
+COPY redsocks.sh /usr/local/bin/
+COPY redsocks-fw.sh /usr/local/bin/
 
+# Set permissions
 RUN chmod +x /usr/local/bin/*
 
+# Switch to non-root user
+USER redsocks
+
+# Entry point
 ENTRYPOINT ["/usr/local/bin/redsocks.sh"]
