@@ -1,5 +1,10 @@
 ## redsocks-dockerfile
-https://github.com/ncarlier/dockerfiles/tree/master/redsocks
+
+```
+docker pull ghcr.io/anoncheg1/redsocks:latest
+```
+
+Container size: 30MB
 
 ## Other Dockerfiles
 - https://github.com/ncarlier/dockerfiles/tree/master/redsocks
@@ -39,7 +44,15 @@ Use docker stop to halt the container. The iptables rules should be reversed. If
 ```
 iptables-save | grep -v REDSOCKS | iptables-restore
 ```
+## Example of usage
+```
+docker run --name my-redsocks --privileged \
+       --net=host -e DOCKER_NET=127.0.0.1 \
+       --cap-drop=ALL --cap-add=NET_ADMIN --cap-add=NET_RAW \
+       -d ncarlier/redsocks 1.2.3.4 1080
 
+docker run --network=container:my-redsocks curlimages/curl curl https://ifconfig.me
+```
 ## Build
 
 Build the image with `make`.
