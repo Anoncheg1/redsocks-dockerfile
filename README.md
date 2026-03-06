@@ -4,7 +4,11 @@
 docker pull ghcr.io/anoncheg1/redsocks:latest
 ```
 
-Container size: 30MB
+"sha256:c89974a429a648681686c2d51b7f5d308409634c9a644497df68eb1435b4783d"
+
+Container size: 148MB
+
+multi-platform: linux/amd64, linux/arm64, linux/arm/v8, linux/arm/v7
 
 ## Other Dockerfiles
 - https://github.com/ncarlier/dockerfiles/tree/master/redsocks
