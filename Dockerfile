@@ -8,16 +8,10 @@ ENV DEBIAN_FRONTEND=noninteractive \
     DOCKER_NET=docker0
 
 # Install redsocks and iptables, clean in one layer
-# RUN apt-get update && \
-#     apt-get install -y --no-install-recommends redsocks iptables && \
-#     apt-get clean && \
-#     rm -rf /var/lib/apt/lists/* && \
-#     adduser --disabled-password --gecos '' redsocks
-RUN apt-get update
-RUN apt-get install -y --no-install-recommends redsocks iptables
-RUN apt-get clean
-RUN rm -rf /var/lib/apt/lists/*
-RUN adduser --disabled-password --gecos '' redsocks
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends redsocks iptables && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Copy files
 COPY redsocks.tmpl /etc/redsocks.tmpl
