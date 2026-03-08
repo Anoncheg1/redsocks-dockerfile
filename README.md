@@ -73,9 +73,7 @@ docker run --rm -it --cap-drop=ALL --cap-add=NET_ADMIN --cap-add=NET_RAW \
        badouralix/curl /bin/sh -c 'curl https://ifconfig.me'
 
 # Run some service that expose 0.0.0.0:80
-docker run -d
-       --network=container:my-redsocks \
-       nginx
+docker run -d --network=container:my-redsocks nginx
 
 ```
 
