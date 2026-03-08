@@ -11,6 +11,7 @@ Container size: 148MB
 multi-platform: linux/amd64, linux/arm64, linux/arm/v8, linux/arm/v7
 
 ## Other Dockerfiles
+
 - https://github.com/ncarlier/dockerfiles/tree/master/redsocks
 - https://github.com/Myts2/redsocks-docker
 
@@ -25,7 +26,7 @@ You have just to run this container and all your other containers will be able t
 Start the container like this:
 
 ```
-docker run --privileged=true --net=host -d ncarlier/redsocks 1.2.3.4 3128
+docker run --privileged=true --net=host -d anoncheg1/redsocks 1.2.3.4 3128
 ```
 
 Replace the IP and the port by those of your proxy.
@@ -48,15 +49,36 @@ Use docker stop to halt the container. The iptables rules should be reversed. If
 ```
 iptables-save | grep -v REDSOCKS | iptables-restore
 ```
-## Example of usage
-```
-docker run --name my-redsocks --privileged \
-       --net=host -e DOCKER_NET=127.0.0.1 \
-       --cap-drop=ALL --cap-add=NET_ADMIN --cap-add=NET_RAW \
-       -d ncarlier/redsocks 1.2.3.4 1080
 
-docker run --network=container:my-redsocks curlimages/curl curl https://ifconfig.me
+## Example of usage
+
 ```
+# Test socks
+curl --socks5 1.2.3.4:3128 https://ifconfig.me
+
+# Test socks within Docker without redsocks:
+docker pull docker.io/badouralix/curl:latest
+docker run --rm -it --cap-drop=ALL --cap-add=NET_ADMIN --cap-add=NET_RAW \
+       badouralix/curl /bin/sh -c 'curl --socks5 1.2.3.4:3128 https://ifconfig.me'
+
+# Run redsocks, open 8080 at host
+docker run --name my-redsocks --privileged \
+       -p 8080:80 -e DOCKER_NET \
+       --cap-drop=ALL --cap-add=NET_ADMIN --cap-add=NET_RAW \
+       -d anoncheg1/redsocks 1.2.3.4 1080
+
+# Test socks within Docker:
+docker run --rm -it --cap-drop=ALL --cap-add=NET_ADMIN --cap-add=NET_RAW \
+       --network=container:my-redsocks \
+       badouralix/curl /bin/sh -c 'curl https://ifconfig.me'
+
+# Run some service that expose 0.0.0.0:80
+docker run -d
+       --network=container:my-redsocks \
+       nginx
+
+```
+
 ## Build
 
 Build the image with `make`.
